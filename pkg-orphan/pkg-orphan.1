@@ -1,0 +1,213 @@
+.\" Copyright (c) 2005 Victor Semionov <semionov@mail.bg>
+.\" All rights reserved.
+.\" 
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. The name of the author may not be used to endorse or promote products
+.\"    derived from this software without specific prior written permission.
+.\" 
+.\" THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+.\" IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+.\" OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+.\" IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+.\" INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+.\" NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+.\" DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+.\" THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+.\" (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+.\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+.\"
+.\"
+.\" $Id: pkg-orphan.1,v 1.1.1.1 2005-11-29 12:39:46 semionov Exp $
+.\"
+.TH "pkg-orphan" "1" "November 27, 2005" "FreeBSD" ""
+.SH "NAME"
+\fBpkg-orphan\fR -- manage unreferenced packages
+.SH "SYNOPSIS"
+\fBpkg-orphan\fR
+[\fB-bBnpqr\fR]
+[\fIname ...\fR]
+.br 
+\fBpkg-orphan\fR
+{\fB-k\fR | \fB-l\fR | \fB-L\fR}
+[\fB-pq\fR]
+[\fIname ...\fR]
+.br 
+\fBpkg-orphan\fR
+{\fB-a\fR | \fB-A\fR | \fB-d\fR}
+[\fB-npq\fR]
+\fIname ...\fR
+.br 
+\fBpkg-orphan\fR
+{\fB-h\fR | \fB-v\fR}
+.SH "DESCRIPTION"
+There are three modes of operation - normal, listing, and keep-list update.
+
+The default mode is normal. In this mode, orphan packages are selected for
+removal, keeping or ignoring. The selection is done either by prompting
+the user for input for each appropriate orphan package, or all of them
+are selected for deletion or keeping (see batch mode below). The packages
+that would be considered for deletion are those that: 1) are orphans;
+2) match any given criteria; 3) are not present in the keep-list
+(see keep-list below).
+
+In normal mode, there are three possible user actions for detected orphans:
+.IP
+Delete - Delete the package (and its dependencies in recursive mode).
+.br
+Keep - Keep the package and add its name to the keep-list.
+.br
+Ignore - Ignore the package and don't add it to the keep-list.
+.LP
+Listing mode is used to show (all, or only a selection of) the list of orphans
+or the list of kept packages (see below).
+
+Keep-list update mode is used to add or remove package names from the
+keep-list.
+
+In each mode, the list of package names (or patterns), given on the command
+line, limits the packages or entries that the mode would operate on. If a list
+of names or patterns is not specified, every appropriate package or entry is
+processed.
+
+\fBKeep-list\fR
+
+\fBpkg-orphan\fR maintains a file that contains a list of kept packages.
+Its purpose is to avoid asking for the same package multiple times in
+subsequent invocations. When detecting orphans in normal mode, if a
+package's name is present in the keep-list, it automatically get skipped,
+in both interactive and batch modes. When a considered package is selected
+as "kept", its name is added to this list.
+
+\fBMode switches\fR
+.IP \fB-l\fR
+List orphan packages.
+.IP \fB-L\fR
+Detailed list of orphan packages.
+.IP \fB-k\fR
+Print contents of the keep-list.
+.IP \fB-a\fR
+Add package names to the keep-list.
+.IP \fB-A\fR
+Same as \fB-a\fR, but limited to installed orphan package names.
+.IP \fB-d\fR
+Delete package names from the keep-list.
+.IP \fB-h\fR
+Print brief usage help and quit.
+.IP \fB-v\fR
+Print version and quit.
+.SH "OPTIONS"
+The following switches don't take arguments, but affect the behavior of
+\fBpkg-orphan\fR:
+.IP \fB-b\fR
+Batch mode. Delete orphan packages, not present in the keep-list,
+without asking.
+.IP \fB-B\fR
+Batch mode. Keep orphan packages and add them to the keep-list,
+without asking.
+.IP \fB-n\fR
+Dry run. Don't delete or change anything, just show what would be done.
+.IP \fB-q\fR
+Be quiet. Only print errors and decision prompts when interactive.
+.IP \fB-p\fR
+Interpret \fIname ...\fR as a list of regular expressions.
+This has no meaning with the \fB-a\fR switch.
+.IP \fB-r\fR
+Delete packages recursively. This is safe enough to not delete shared dependencies
+(packages which are referenced by other orphans), or any previously kept packages,
+that are currently not orphans.
+.SH "TECHNICAL DETAILS"
+To be as clear as possible, here is what happens internally in normal mode:
+
+Package consideration:
+.IP 1.
+Prepare a list of all installed orphan packages.
+.IP 2.
+From this list, take only those packages which match the criteria,
+supplied on the command line as a list of package names or patterns.
+.IP 3.
+Load the keep-list, if present.
+.IP 4.
+Mark for skipping all items in the list prepared in step 2,
+that are present in the keep-list.
+.IP 5.
+For the rest of the items, either mark them for deletion or keeping
+in batch mode, or ask the user for action in interactive mode.
+.IP 6.
+In recursive mode, for every orphan, marked for deletion, prepare a list
+of all packages, referenced directly or indirectly by the
+processed orphan.
+.IP 7.
+Do the actual deletion of the above orphan and its dependencies
+(in recursive mode).
+
+.LP
+Package deletion (including dependencies):
+.IP 1.
+Abort removal if package name exists is keep-list. This is necessary
+to prevent deletion of former orphans in the keep-list.
+.IP 2.
+Abort removal if the package is _currently_ an orphan. This prevents
+deletion of shared dependencies.
+.IP 3.
+Call pkg_delete(1) to remove the package.
+.SH "EXAMPLES"
+.IP \fBo\fR
+Check what would be done by recursively deleting all unkept orphans:
+.br
+pkg-orphan -brn
+.IP \fBo\fR
+Delete all unkept orphans, automatically:
+.br
+pkg-orphan -br
+.IP \fBo\fR
+Delete packages foo and bar:
+.br
+pkg-orphan -b foo bar
+.IP \fBo\fR
+Same as above:
+.br
+pkg-orphan -pb "^(foo|bar)$"
+.IP \fBo\fR
+Delete packages, whose name contains "baz":
+.br
+pkg-orphan -p "baz"
+.IP \fBo\fR
+Clear keep-list:
+.br
+pkg-orphan -pd ".*"
+.IP \fBo\fR
+See what would be done by the above:
+.br
+pkg-orphan -npd ".*"
+.IP \fBo\fR
+Add foo and bar to keep-list:
+.br
+pkg-orphan -a foo bar
+.IP \fBo\fR
+List all orphans with some details:
+.br
+pkg-orphan -L
+.IP \fBo\fR
+Show which kept packages start with "ba":
+.br
+pkg-orphan -pk "^ba"
+.SH "ENVIRONMENT"
+.IP PKG_DBDIR
+Specifies an alternative location for the installed package database
+and the kept package list.
+.SH "FILES"
+.IP /var/db/pkg/orphans.lst
+This is the default location of the keep-list.
+An alternate location can be given by setting the
+PKG_DBDIR environment variable.
+.SH "SEE ALSO"
+pkg_info(1), pkg_delete(1)
+.SH "AUTHORS"
+Victor Semionov <semionov@mail.bg>
