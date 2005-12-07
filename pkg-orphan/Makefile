@@ -1,4 +1,4 @@
-# Copyright (c) 2005 Victor Semionov <semionov@mail.bg>
+# Copyright (c) 2005 Victor Semionov <vsemionov@gmail.com>
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -24,7 +24,7 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-# $Id: Makefile,v 1.1.1.1 2005-11-29 12:39:46 semionov Exp $
+# $Id: Makefile,v 1.2 2005-12-07 21:13:13 semionov Exp $
 
 PREFIX?=			/usr/local
 

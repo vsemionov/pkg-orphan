@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright (c) 2005 Victor Semionov <semionov@mail.bg>
+# Copyright (c) 2005 Victor Semionov <vsemionov@gmail.com>
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
 
 
 
-# $Id: pkg-orphan.pl,v 1.1.1.1 2005-11-29 12:39:46 semionov Exp $
+# $Id: pkg-orphan.pl,v 1.2 2005-12-07 21:13:13 semionov Exp $
 
 #use warnings;
 use strict;
@@ -36,7 +36,7 @@ use Getopt::Std;
 
 
 
-my $version = "0.1.0";
+my $version = "0.1.x";
 my $dbdir = (exists $ENV{PKG_DBDIR}? $ENV{PKG_DBDIR} : "/var/db/pkg");
 my $keeplist = $dbdir . "/orphans.lst";
 my %opts;
@@ -91,7 +91,7 @@ else
 
 sub version
 {
-	my $help = "pkg-orphan $version\nCopyright (c) 2005 Victor Semionov <semionov\@mail.bg>\n";
+	my $help = "pkg-orphan $version\nCopyright (c) 2005 Victor Semionov <vsemionov\@gmail.com>\n";
 	print $help;
 }
 
@@ -246,7 +246,7 @@ my %deleted;
 
 sub state
 {
-	print "===> @_\n" unless $opts{q};
+	print "===>  @_\n" unless $opts{q};
 }
 
 sub item
