@@ -27,7 +27,7 @@
 
 
 
-# $Id: pkg-orphan.pl,v 1.2 2005-12-07 21:13:13 semionov Exp $
+# $Id: pkg-orphan.pl,v 1.3 2006-03-03 03:19:12 semionov Exp $
 
 #use warnings;
 use strict;
@@ -36,7 +36,7 @@ use Getopt::Std;
 
 
 
-my $version = "0.1.x";
+my $version = "0.1.1";
 my $dbdir = (exists $ENV{PKG_DBDIR}? $ENV{PKG_DBDIR} : "/var/db/pkg");
 my $keeplist = $dbdir . "/orphans.lst";
 my %opts;
