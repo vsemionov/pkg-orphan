@@ -1,3 +1,6 @@
+1.0.1:
+- bug fix: when adding packages with -A, version numbers are no longer included in the keep list
+
 0.1.1:
 - small change to status messages, to resemble output from port builds
 - changed email address

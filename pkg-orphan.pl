@@ -34,7 +34,7 @@ use Getopt::Std;
 
 
 my $progname = "pkg-orphan";
-my $version = "0.1.1";
+my $version = "1.0.1";
 my $copytight = "Copyright (C) 2005-2011 Victor Semionov <vsemionov\@gmail.com>";
 my $rights = "All rights reserved.";
 
