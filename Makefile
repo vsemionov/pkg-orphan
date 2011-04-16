@@ -25,8 +25,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-# $Id: Makefile,v 1.2 2005-12-07 21:13:13 semionov Exp $
-
 PREFIX?=			/usr/local
 
 SCRIPTS=			pkg-orphan.pl
