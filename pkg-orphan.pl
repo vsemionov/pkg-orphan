@@ -33,11 +33,15 @@ use strict;
 use Getopt::Std;
 
 
-
+my $progname = "pkg-orphan";
 my $version = "0.1.1";
+my $copytight = "Copyright (C) 2005-2011 Victor Semionov <vsemionov\@gmail.com>";
+my $rights = "All rights reserved.";
+
 my $dbdir = (exists $ENV{PKG_DBDIR}? $ENV{PKG_DBDIR} : "/var/db/pkg");
 my $keeplist = $dbdir . "/orphans.lst";
 my %opts;
+
 getopts("aAbBdhklLnpqrv", \%opts);
 
 &one_switch("aAdhklLv");
@@ -86,10 +90,9 @@ else
 
 
 
-
 sub version
 {
-	my $help = "pkg-orphan $version\nCopyright (c) 2005 Victor Semionov <vsemionov\@gmail.com>\n";
+	my $help = "$progname $version\n$copytight\n$rights\n";
 	print $help;
 }
 
@@ -98,9 +101,9 @@ sub usage
 	&version();
 
 	my $help = "
-Usage: pkg-orphan [-bBnpqr] [-a | -A | -d | -h | -k | -l | -L | -v] [name ...]
+Usage: $progname [-bBnpqr] [-a | -A | -d | -h | -k | -l | -L | -v] [name ...]
 
-Without any switches, pkg-orphan enters interactive mode, asking what to do for
+Without any switches, $progname enters interactive mode, asking what to do for
 each unreferenced (orphan) package. Previously kept packages are skipped.
 
 Commands:
@@ -234,13 +237,11 @@ sub grep_inverse
 
 
 
-
 my @orphans;
 my %kept;
 my %newkept;
 my @ops;
 my %deleted;
-
 
 sub state
 {
