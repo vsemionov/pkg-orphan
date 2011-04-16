@@ -66,7 +66,7 @@ elsif ($opts{l} || $opts{L})
 elsif ($opts{a} || $opts{A})
 {
 	&load_kept();
-	&add_kept($opts{A}? &load_orphans(@ARGV? @ARGV : undef) : @ARGV);
+	&add_kept($opts{A}, $opts{A}? &load_orphans(@ARGV? @ARGV : undef) : @ARGV);
 	&save_kept();
 }
 elsif ($opts{d})
@@ -299,7 +299,7 @@ sub save_kept
 {
 	if (my @newnames = sort keys %newkept)
 	{
-		&add_kept(@newnames);
+		&add_kept(0, @newnames);
 	}
 	&state("Saving new list of kept packages.");
 	unless ($opts{n})
@@ -327,11 +327,13 @@ sub list_kept
 
 sub add_kept
 {
+	my $full = shift;
 	my @names = @_;
 	&state("Adding names to the list of kept packages.");
 	my $cnt = 0;
-	foreach my $name (@names)
+	foreach my $pkg (@names)
 	{
+		my $name = (!$full? $pkg : &get_name($pkg));
 		unless (exists $kept{$name})
 		{
 			&item($name, 1);
