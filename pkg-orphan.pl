@@ -27,9 +27,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-
-# $Id: pkg-orphan.pl,v 1.3 2006-03-03 03:19:12 semionov Exp $
-
 #use warnings;
 use strict;
 
